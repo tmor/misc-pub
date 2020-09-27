@@ -1,0 +1,37 @@
+[core]
+        editor = vim
+[color]
+	ui = auto
+[alias]
+	ad = add
+	br = branch
+	ci = commit
+	cia = commit --amend
+	cih = commit --amend -C HEAD
+	cih1 = commit --amend -c HEAD@{1}
+	co = checkout
+	d = diff
+	dc = diff --cached
+	dn = diff --name-only
+	dw = diff --color-words
+	ft = fetch
+	l = log --oneline -n 20
+	lg = log --graph --pretty=format:'%Cred%h%Creset - %an - %C(yellow)%d%Creset %s %Cgreen(%cd)%Creset' --abbrev-commit --date=iso
+	lgraph = log --oneline --graph --decorate --all -n 20
+	lp = log --oneline -n 20 -p
+	ls = log --stat -n 1 --date=iso
+	pl = pull
+	ps = push
+	rb = rebase
+	rbh = rebase HEAD
+	rbo = rebase --onto
+	rl = reflog show -n 20
+	rs = reset
+	rsh = reset --hard
+	sb = show-branch
+	sh = show
+	so = remote show origin
+	st = status -s
+	push-f = push --force-with-lease
+	delete-merged-branches = !git branch --merged | grep -vE \"^\\*|master$|develop$|^release\" | xargs git branch -d
+        tag-sr = !git tag | sort -r -t . -n -k 1,1 -k 2,2 -k 3,3
