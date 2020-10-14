@@ -1,7 +1,15 @@
 [core]
-        editor = vim
+	editor = vim
+
 [color]
 	ui = auto
+
+[merge]
+    ff = false
+
+[pull]
+    ff = only
+
 [alias]
 	ad = add
 	br = branch
@@ -33,5 +41,13 @@
 	so = remote show origin
 	st = status -s
 	push-f = push --force-with-lease
-	delete-merged-branches = !git branch --merged | grep -vE \"^\\*|master$|develop$|^release\" | xargs git branch -d
-        tag-sr = !git tag | sort -r -t . -n -k 1,1 -k 2,2 -k 3,3
+	delete-merged-branches = !git branch --merged | grep -vE \"^\\*|^\\s*(main$|master$|develop$|release)\" | xargs git branch -d
+	tag-sr = !git tag | sort -r -t . -n -k 1,1 -k 2,2 -k 3,3
+
+# Example
+#  .gitattributes
+#  --
+#  *.html diff=mixed
+#  --
+[diff "mixed"]
+	textconv = nkf -w8
