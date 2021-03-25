@@ -18,20 +18,22 @@
 
 [toplevel]
 
-# select aws profile
+# list profile
 profile =
   !f() {
-    grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config
+    type ggrep >/dev/null 2>&1 && alias grep='ggrep' # macOS
+    eval "grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config"
   }; f
 
-# select aws profile with cui
+# select profile with cui
 profile-cui =
   !f() {
-    grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config \
-      | peco > ~/.aws/cli/.profile
+    type ggrep >/dev/null 2>&1 && alias grep='ggrep' # macOS
+    eval "grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config \
+      | peco > ~/.aws/cli/.profile"
   }; f
 
-# select aws region with cui
+# select region with cui
 region-cui =
   !f() {
     aws profile-cui
