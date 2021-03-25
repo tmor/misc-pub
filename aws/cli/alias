@@ -1,0 +1,90 @@
+# awscli alias
+#
+# Requires:
+#   GNU grep
+#   peco
+#
+# Install:
+#   cp alias ~/.aws/cli/
+#
+# Examples:
+#   https://github.com/awslabs/awscli-aliases
+#
+# Usage:
+#   aws alias
+#   aws profile
+#   aws profile-cui
+#
+
+[toplevel]
+
+# select aws profile
+profile =
+  !f() {
+    grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config
+  }; f
+
+# select aws profile with cui
+profile-cui =
+  !f() {
+    grep -o -P '(?<=\[profile )[^\]]+' ~/.aws/config \
+      | peco > ~/.aws/cli/.profile
+  }; f
+
+# select aws region with cui
+region-cui =
+  !f() {
+    aws profile-cui
+    aws ec2 describe-regions \
+      --profile $(cat ~/.aws/cli/.profile) \
+      --query Regions[].RegionName --output text \
+      | tr '\t' '\n' \
+      | peco > ~/.aws/cli/.region
+  }; f
+
+
+# search by tag:Name
+#
+# Example:
+#   tag value: *web*
+tag-name =
+  !f() {
+     aws region-cui
+     read -p "Enter tag value: " TAG_VALUE
+     aws ec2 describe-tags \
+       --filters "Name=tag:Name,Values=${TAG_VALUE}" \
+       --output json \
+       --profile $(cat ~/.aws/cli/.profile) \
+       --region $(cat ~/.aws/cli/.region)
+  }; f
+
+# search by tag-key
+#
+# Example:
+#   tag key: backup*
+tag-key =
+  !f() {
+     aws region-cui
+     read -p "Enter tag key: " TAG_KEY
+     aws ec2 describe-tags \
+       --filters "Name=tag-key,Values=${TAG_KEY}" \
+       --output json \
+       --profile $(cat ~/.aws/cli/.profile) \
+       --region $(cat ~/.aws/cli/.region)
+  }; f
+
+
+# search by ec2 id
+#
+# Example:
+#   ec2 ids: i-1234567890
+ec2-id =
+  !f() {
+     aws region-cui
+     read -p "Enter ec2 ids: " EC2_IDS
+     aws ec2 describe-instances \
+       --instance-ids $EC2_IDS \
+       --output json \
+       --profile $(cat ~/.aws/cli/.profile) \
+       --region $(cat ~/.aws/cli/.region)
+  }; f
