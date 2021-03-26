@@ -7,6 +7,9 @@
 # Install:
 #   cp alias ~/.aws/cli/
 #
+# macOS:
+#   brew install grep peco
+#
 # Examples:
 #   https://github.com/awslabs/awscli-aliases
 #
