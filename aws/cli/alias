@@ -14,6 +14,7 @@
 #   aws alias
 #   aws profile
 #   aws profile-cui
+#   ...
 #
 
 [toplevel]
@@ -34,6 +35,10 @@ profile-cui =
   }; f
 
 # select region with cui
+#
+# ToDo:
+#   Cache the results for a day.
+#   Example: stat -c %Z ~/.aws/cli/.region.cache # works it on GNU linux. but incompatible it on macOS.
 region-cui =
   !f() {
     aws profile-cui
@@ -63,8 +68,8 @@ tag-name =
 # search by tag-key and tag-value
 #
 # Example:
-#   tag key: backup*
-#   tag key: yes
+#   tag key: backup:*
+#   tag value: yes
 tag-key-value =
   !f() {
      aws region-cui
