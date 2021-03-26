@@ -60,16 +60,19 @@ tag-name =
        --region $(cat ~/.aws/cli/.region)
   }; f
 
-# search by tag-key
+# search by tag-key and tag-value
 #
 # Example:
 #   tag key: backup*
-tag-key =
+#   tag key: yes
+tag-key-value =
   !f() {
      aws region-cui
      read -p "Enter tag key: " TAG_KEY
+     read -p "Enter tag value: " TAG_VALUE
      aws ec2 describe-tags \
        --filters "Name=tag-key,Values=${TAG_KEY}" \
+       "Name=tag-value,Values=${TAG_VALUE}" \
        --output json \
        --profile $(cat ~/.aws/cli/.profile) \
        --region $(cat ~/.aws/cli/.region)
