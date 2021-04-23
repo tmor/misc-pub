@@ -1,0 +1,66 @@
+#
+# Example: read remote java properties
+#
+# # /tmp/example1.properties
+# db.url=jdbc:mysql://localhost:3306/testdb
+# db.user=test
+# db.password=test12345
+#
+# # /tmp/example2.properties
+# db.url=jdbc:mysql://localhost:3306/testdb2
+# db.user=test2
+# db.password=test2-12345
+- hosts:
+  - all
+  gather_facts: false
+  become: false
+  vars:
+    debug: 0
+    props: []
+    props_path: /tmp/*.properties
+
+  pre_tasks:
+
+  roles:
+
+  tasks:
+  - block:
+    - shell: ls -1  {{ props_path }}
+      register: result_props
+
+    - slurp:
+        src: "{{ item }}"
+      with_items: "{{ result_props.stdout_lines }}"
+      register: result_props2
+
+    - debug:
+        msg: "{{ item.content | b64decode | regex_search('db.url=jdbc:mysql://([^:/]+)') | regex_replace('db.url=jdbc:mysql://', '') }}"
+      with_items: "{{ result_props2.results }}"
+      when: debug|int
+      loop_control:
+        label: "{{ item.item }}"
+
+    - set_fact:
+        props: >
+          {{
+            props +
+            [
+              {
+                'host': item.content | b64decode | regex_search('db.url=jdbc:mysql://([^:/]+)') | regex_replace('db.url=jdbc:mysql://', ''),
+                'user': item.content | b64decode | regex_search('db.user=([^\n]+)') | regex_replace('db.user=', ''),
+                'password': item.content | b64decode | regex_search('db.password=([^\n]+)') | regex_replace('db.password=', '')
+              }
+            ]
+          }}
+      with_items: "{{ result_props2.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - debug:
+        var: props
+      when: debug|int
+
+    run_once: true
+    tags:
+    - always
+    - example
