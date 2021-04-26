@@ -1,0 +1,69 @@
+#
+# Example: read remote conf
+#
+# # /tmp/example1.conf
+# <source>
+#   host localhost
+#   user test
+#   password test12345
+# </source>
+#
+# <source>
+#   host localhost2
+#   user test2
+#   password test2-12345
+# </source>
+- hosts:
+  - all
+  gather_facts: false
+  become: false
+  vars:
+    debug: 0
+    db_hosts: []
+    db_hosts_src: /tmp/example1.conf
+
+  pre_tasks:
+
+  roles:
+
+  tasks:
+  - block:
+    - slurp:
+        src: "{{ db_hosts_src }}"
+      register: result_db_hosts
+
+    - set_fact:
+        db_host: "{{ result_db_hosts.content | b64decode | regex_findall('host\\s+([^\n]+)') }}"
+        db_user: "{{ result_db_hosts.content | b64decode | regex_findall('user\\s+([^\n]+)') }}"
+        db_password: "{{ result_db_hosts.content | b64decode | regex_findall('password\\s+([^\n]+)') }}"
+
+    - set_fact:
+        db_hosts: >
+          {{
+            db_hosts +
+            [
+              {
+                'host': db_host[ansible_loop.index0],
+                'user': db_user[ansible_loop.index0],
+                'password': db_password[ansible_loop.index0]
+              }
+           ]
+          }}
+      with_items: "{{ db_host }}"
+      loop_control:
+        extended: yes
+
+    - set_fact:
+        db_hosts: >
+          {{
+            db_hosts | json_query('[].{"host": host, "user": user, "password": password}') | unique
+          }}
+
+    - debug:
+        var: db_hosts
+      when: debug|int
+
+    run_once: true
+    tags:
+    - always
+    - example
