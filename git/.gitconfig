@@ -5,10 +5,10 @@
 	ui = auto
 
 [merge]
-    ff = false
+	ff = false
 
 [pull]
-    ff = only
+	ff = only
 
 [alias]
 	ad = add
@@ -41,8 +41,9 @@
 	so = remote show origin
 	st = status -s
 	push-f = push --force-with-lease
-	delete-merged-branches = !git branch --merged | grep -vE \"^\\*|^\\s*(main$|master$|develop$|release)\" | xargs git branch -d
+	delete-merged-branches = !git branch --merged | grep -vE \"^\\*|^\\s*(main$|master$|develop|release)\" | xargs git branch -d
 	tag-sr = !git tag | sort -r -t . -n -k 1,1 -k 2,2 -k 3,3
+	history = for-each-ref --sort=-committerdate refs/heads --format='%(refname:short) %(committerdate:iso) %(subject)'
 
 # Example
 #  .gitattributes
