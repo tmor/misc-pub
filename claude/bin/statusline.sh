@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Claude Code status line script
-# ~/.claude/statusline.sh
+# ~/.claude/bin/statusline.sh
 #
 # settings.json への追加方法:
 #   "statusLine": {
 #     "type": "command",
-#     "command": "bash ~/.claude/statusline.sh"
+#     "command": "bash ~/.claude/bin/statusline.sh"
 #   }
 
 input=$(cat)
